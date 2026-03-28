@@ -52,8 +52,16 @@ int main(){
         printMatrix(mr);
         printf("is %.2lf", det);
     }
+    else{
+        printf("This matrix is not square, but it becomes a trapezoid like this: \n");
+        TransformMatrixTriangle(mr);
+        printMatrix(mr);
+    }
 
-
+    for(int i = 0; i<rows; i++){
+        free(data[i]);
+    }
+    free(data);
 
     return 0;
 
