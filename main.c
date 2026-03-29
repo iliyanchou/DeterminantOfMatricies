@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include<stdbool.h>
 
 
 struct Matrix
@@ -8,15 +9,28 @@ struct Matrix
     int r;
     int c;
     double** data;
+    double** originaState;
+    double Determinant;
+    int Rang;
 
 };
+
+void cleanBuffer(){
+    int c;
+    while((c = getchar()) != '\n' && c != EOF);
+}
 
 
 double Det(struct Matrix matrix);
 
 int TransformMatrixTriangle(struct Matrix matrix);
 
+void TransponeMatrix(struct Matrix matrix);
+
 void printMatrix(struct Matrix matrix);
+
+int Rang(struct Matrix matrix);
+
 
 
 int main(){
@@ -24,10 +38,30 @@ int main(){
     int rows;
     int columns;
     printf("Please insert dimensions of matrix:\n");
-    printf("Insert rows: ");
-    scanf("%d", &rows);
-    printf("Insert columns: ");
-    scanf("%d", &columns);
+    while(1){
+        printf("Insert rows: ");
+        if(scanf("%d", &rows) == 0 || rows <= 0){
+            printf("rows must be an non negative intiger!\n");
+            cleanBuffer();
+            continue;
+        }
+        else{
+            cleanBuffer();
+            break;
+        }
+    }
+    while(1){
+        printf("Insert columns: ");
+        if(scanf("%d", &columns) == 0 || columns <= 0){
+            printf("columns must be a non negative intiger!\n");
+            cleanBuffer();
+            continue;
+        }
+        else{
+            cleanBuffer();
+            break;
+        }
+    }
 
     double** data = malloc(rows*sizeof(double*));
     for(int i = 0; i<rows; i++){
@@ -37,31 +71,43 @@ int main(){
     for(int r = 0; r<rows; r++){
         printf("Enter elements of row %d one by one:\n", r+1);
         for(int c = 0; c<columns; c++){
-            printf("Enter element %d%d: ", r+1, c+1);
-            scanf("%lf", &data[r][c]);
+            while(1){
+                printf("Enter element %d%d: ", r+1, c+1);
+                if(scanf("%lf", &data[r][c]) == 0){
+                    printf("The inserted value must be a number!\n");
+                    cleanBuffer();
+                    continue;
+                }
+                else{
+                    cleanBuffer();
+                    break;
+                }
+            }
         }
     }
+    struct Matrix mr = {rows, columns, data, data};
 
-    struct Matrix mr = {rows, columns, data};
-
-    if(mr.r == mr.c){
-        printf("The determinant of matrix:\n");
-        printMatrix(mr);
-        printf("Which becomes:\n");
-        double det = Det(mr);
-        printMatrix(mr);
-        printf("is %.2lf", det);
-    }
-    else{
-        printf("This matrix is not square, but it becomes a trapezoid like this: \n");
-        TransformMatrixTriangle(mr);
-        printMatrix(mr);
-    }
+    
 
     for(int i = 0; i<rows; i++){
         free(data[i]);
     }
     free(data);
+
+    // if(mr.r == mr.c){
+    //     printf("The determinant of matrix:\n");
+    //     printMatrix(mr);
+    //     printf("Which becomes:\n");
+    //     double det = Det(mr);
+    //     printMatrix(mr);
+    //     printf("is %.2lf", det);
+    // }
+    // else{
+    //     printf("This matrix is not square, but it becomes a trapezoid like this: \n");
+    //     TransformMatrixTriangle(mr);
+    //     printMatrix(mr);
+    // }
+
 
     return 0;
 
@@ -109,6 +155,49 @@ double Det(struct Matrix matrix){
     }
     return determinant;
 }
+
+int Rang(struct Matrix matrix){
+    int maxRang = matrix.r;
+    bool isZero = true;
+    TransformMatrixTriangle(matrix);
+    for(int r = matrix.r-1; r >= 0; r--)
+    {
+        for(int c = 0; c < matrix.c; c++)
+        {
+            if(matrix.data[r][c] != 0){
+                isZero = false;
+                break;
+            }
+        }
+        if(isZero){
+            maxRang --;
+        }
+        else{
+            isZero = true;
+        }
+    }
+    return maxRang;
+}
+
+// void TransponeMatrix(struct Matrix m) {
+//     struct Matrix result;
+//     result.r = m.c; 
+//     result.c = m.r; 
+
+
+//     result.data = malloc(result.r * sizeof(double*));
+    
+//     for (int i = 0; i < result.r; i++) {
+
+//         result.data[i] = malloc(result.c * sizeof(double));
+        
+
+//         for (int j = 0; j < result.c; j++) {
+
+//             result.data[i][j] = m.data[j][i];
+//         }
+//     }
+// }
 
 void printMatrix(struct Matrix matrix){
     for(int r = 0; r<matrix.r; r++)
