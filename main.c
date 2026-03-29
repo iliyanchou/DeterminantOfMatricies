@@ -25,11 +25,36 @@ double Det(struct Matrix matrix);
 
 int TransformMatrixTriangle(struct Matrix matrix);
 
-void TransponeMatrix(struct Matrix matrix);
+// void TransponeMatrix(struct Matrix matrix);
 
 void printMatrix(struct Matrix matrix);
 
 int Rang(struct Matrix matrix);
+
+struct Matrix SumSbs(struct Matrix matrix1 , struct Matrix matrix2, int op){
+    double** initalData = malloc(matrix1.r*sizeof(double*));
+    for(int i = 0; i < matrix1.r; i++){
+        initalData[i] = malloc(matrix1.c*sizeof(double));
+    }
+    
+    if(op == 1){
+        for(int r = 0; r<matrix1.r; r++){
+            for(int c = 0; c<matrix1.c; c++){
+                initalData[r][c] = matrix1.data[r][c]+matrix2.data[r][c];
+            }
+        }
+    }
+    else{
+       for(int r = 0; r<matrix1.r; r++){
+            for(int c = 0; c<matrix1.c; c++){
+                initalData[r][c] = matrix1.data[r][c]-matrix2.data[r][c];
+            }
+        } 
+    }
+    struct Matrix result = {matrix1.r, matrix1.c, initalData, initalData};
+
+    return result;
+}
 
 
 
@@ -209,3 +234,4 @@ void printMatrix(struct Matrix matrix){
         printf("\n");
     }
 }
+
